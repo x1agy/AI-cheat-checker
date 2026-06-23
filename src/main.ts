@@ -9,13 +9,16 @@ let mainWindow: BrowserWindow | null = null;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 900,
-    height: 720,
+    height: 820,
+    icon: path.join(__dirname, '../assets/logo.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
+
+  mainWindow.setMenu(null);
 
   mainWindow.loadFile(path.join(__dirname, '../src/index.html'));
   mainWindow.on('closed', () => {

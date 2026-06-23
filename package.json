@@ -54,7 +54,8 @@
         "portable"
       ],
       "certificateFile": null,
-      "signingHashAlgorithms": null
+      "signingHashAlgorithms": null,
+      "icon": "assets/logo.png"
     }
   },
   "author": "x1agy"
