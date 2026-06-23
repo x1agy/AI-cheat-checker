@@ -242,11 +242,11 @@ function parseInstallDate(systeminfo: string): string | undefined {
 }
 
 function buildAiPrompt(report: Record<string, unknown>): string {
-  return `You are a Windows security analyst. Analyze the collected artifact report below for suspicious cheat client activity, hidden persistence, recent deleted file artifacts, and any likely compromise indicators. Provide a concise conclusion and list the most suspicious findings. Ignore game clients that are known to be legitimate. Focus on potential cheat clients, injectors, and suspicious registry entries.
-
-${JSON.stringify(report, null, 2)}
-
-Respond with a summary on Russian language.`;
+  return `${JSON.stringify(
+    report,
+    null,
+    2
+  )} Respond with a summary on Russian language.`;
 }
 
 function getApiKey() {
@@ -272,11 +272,12 @@ async function analyzeWithOllama(prompt: string): Promise<string | undefined> {
       },
       body: JSON.stringify({
         model: 'gpt-oss:120b',
+        stream: false,
         messages: [
           {
             role: 'system',
             content:
-              'You are a Windows security analyst. Analyze the report for suspicious cheat activity and summarize the most important findings.',
+              "You are a games security analyst. Analyze the collected artifact report below for suspicious cheat client activity, hidden persistence, recent deleted file artifacts, and any likely compromise indicators. Provide a concise conclusion and list the most suspicious findings. Ignore game clients that are known to be legitimate. Focus on potential cheat clients, injectors, and suspicious registry entries. Don't give advise on how to remove or mitigate, just provide a summary of the findings. Don't try to find to hard, your job is cold minded analysis. Don't react on cheat-scanner it's our program. Don't react on any windows system files, only focus on suspicious cheat clients and injectors. Don't react on any known game clients like steam, epic games, origin, uplay, etc. Don't react on any known game launchers like battle.net, gog galaxy, etc. Don't react on any known anti-cheat like easy anti-cheat, battleye, valve anti-cheat, etc. Don't react on any known game files or folders. Focus on the suspicious findings and provide a summary of the most important ones.",
           },
           {
             role: 'user',
