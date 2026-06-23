@@ -242,11 +242,91 @@ function parseInstallDate(systeminfo: string): string | undefined {
 }
 
 function buildAiPrompt(report: Record<string, unknown>): string {
-  return `${JSON.stringify(
+  return `
+  You are a game security analyst reviewing an artifact report produced by our internal cheat-scanner.
+
+Your task:
+Analyze the report for suspicious cheat client activity, injectors, loaders, hidden persistence, recent deleted cheat-related artifacts, suspicious registry entries, and likely compromise indicators.
+
+Important scope rules:
+
+* Do NOT react to our own tool named cheat-scanner or any of its files, folders, logs, registry traces, or execution artifacts.
+* Do NOT react to normal Windows system files, Windows components, drivers, services, DLLs, scheduled tasks, or default registry entries.
+* Do NOT react to known legitimate game clients, game launchers, game stores, or their cache artifacts.
+* Do NOT react to known anti-cheat systems, even if they belong to other games.
+* Do NOT report generic game files, game folders, shaders, logs, crash dumps, launcher cache, or normal game telemetry.
+* Do NOT report MUI-cache entries by themselves. MUI-cache only shows that something was displayed/executed and is not suspicious without a clearly suspicious executable name or path.
+* Do NOT report Telegram WebView, browser WebView, Discord cache, Chromium cache, Electron cache, or normal app cache artifacts unless they clearly reference a cheat, injector, loader, stealer, RAT, or suspicious executable.
+* Do NOT overreact to generic words such as overlay, hook, driver, service, launcher, updater, helper, bootstrapper, crashhandler, webview, cef, runtime, redistributable, or anticheat when they belong to legitimate software.
+* Do NOT treat deleted files as suspicious only because they are deleted. Deleted artifacts are suspicious only if their names, paths, timestamps, or surrounding context indicate cheat clients, injectors, loaders, bypass tools, credential stealers, or malware.
+
+Known legitimate items to ignore unless there is strong contradictory evidence:
+
+* Steam, Epic Games, EA App / Origin, Ubisoft Connect / Uplay, Battle.net, GOG Galaxy, Rockstar Launcher, Riot Client, Xbox App, Microsoft Store games.
+* Easy Anti-Cheat, BattlEye, Vanguard, VAC, FACEIT AC, Ricochet, PunkBuster, Xigncode, GameGuard, ESEA, FiveM/RedM legitimate components.
+* Telegram, Discord, browsers, WebView2, Chromium Embedded Framework, Overwolf, NVIDIA/AMD/Intel overlays, OBS, MSI Afterburner, RTSS, Logitech/Razer/Corsair software.
+* Microsoft Visual C++ Redistributables, .NET, DirectX, Windows Defender, Windows Update, system32, SysWOW64, WinSxS, ProgramData Microsoft components.
+
+Suspicious indicators to prioritize:
+
+* Executables, DLLs, drivers, scripts, archives, or folders with cheat-related names such as cheat, hack, loader, injector, bypass, spoofer, hwid, aimbot, wallhack, esp, radar, triggerbot, silentaim, modmenu, executor, external, internal, unlocker, dumper, mapper, kdmapper, drvmap, manualmap.
+* Suspicious tools used for injection or driver loading: DLL injectors, manual mappers, unsigned kernel drivers, vulnerable driver loaders, process hollowing tools.
+* Persistence connected to suspicious files: Run keys, Services, Scheduled Tasks, Startup folder, WMI persistence, IFEO debugger keys, AppInit_DLLs, Shell/Userinit modifications.
+* Suspicious recently deleted artifacts where the name/path strongly suggests cheat software, injector, loader, bypass, spoofer, or malware.
+* Suspicious paths such as Temp, Downloads, Desktop, AppData, ProgramData, Public, Recycle Bin, random-name folders, or hidden folders containing cheat/injector-style files.
+* Evidence chains: the same suspicious name appearing across Prefetch, Amcache/ShimCache, UserAssist, RecentFiles, registry, deleted files, browser downloads, archives, and execution traces.
+* Compromise indicators such as stealers, RATs, suspicious PowerShell/cmd scripts, credential dumpers, unknown remote access tools, or persistence pointing to unknown executables.
+* Known cheat client names, injector names, loader names, bypass tool names.
+* 
+
+Analysis rules:
+
+* Be conservative and cold-minded.
+* Do not invent findings.
+* Do not force suspicion from weak artifacts.
+* Do not report safe/benign artifacts just because they look technical.
+* Prefer evidence chains over single weak indicators.
+* If a finding is only weak or ambiguous, mark it as "low confidence" or omit it.
+* If something is suspicious only because of its name but there is no execution or persistence evidence, say so clearly.
+* Do not provide removal, mitigation, cleanup, bypass, or evasion advice.
+* Look for specially for those cheats:
+  Impulse Menu 
+  Luna Menu 
+  Cherax
+  Stand (Stand Mod Menu)
+  2Take1 Menu 
+  Midnight
+  Rebound
+  North Menu
+  Eulen 
+  Sapphire Menu
+  X-Force
+* Don't offer additional actions
+* Don't SRP launcher
+
+Output format:
+
+1. Concise conclusion:
+
+   * Clear suspicious cheat activity found / likely suspicious activity / inconclusive / no strong suspicious findings.
+2. Most suspicious findings:
+
+   * List only important findings.
+   * For each finding include: artifact, path/key if available, why suspicious, confidence level.
+3. Recent deleted suspicious artifacts:
+
+   * Only list deleted items that are actually suspicious.
+4. Suspicious persistence:
+
+   * Only list persistence entries pointing to suspicious files.
+5. Ignore summary:
+
+   * Briefly mention categories intentionally ignored, such as game clients, anti-cheats, Windows files, MUI-cache-only entries, Telegram/WebView/cache artifacts.
+  ${JSON.stringify(
     report,
     null,
     2
-  )} Respond with a summary on Russian language.`;
+  )} Respond with a summary on Russian language. НЕ ПИШИ РЕКОМЕНДАЦИИ ПО УДАЛЕНИЮ ИЛИ УСТРАНЕНИЮ, ТОЛЬКО АНАЛИЗ.`;
 }
 
 function getApiKey() {
