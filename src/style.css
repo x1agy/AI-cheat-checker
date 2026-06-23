@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #eee;
+}
+
+.app-shell {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+header p {
+  margin: 0;
+  color: #bbb;
+}
+
+.form-section,
+.scan-section {
+  margin-top: 24px;
+  border: 1px solid #333;
+  background: #1d1d1d;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #191919;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 10px;
+}
+
+button {
+  margin-top: 12px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #ff4d4d;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e03e3e;
+}
+
+.output {
+  margin-top: 16px;
+  background: #0f0f0f;
+  border: 1px solid #333;
+  min-height: 280px;
+  padding: 16px;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  border-radius: 10px;
+  color: #c7c7c7;
+}
+
+#keyStatus {
+  margin-top: 12px;
+  color: #9cd0ff;
+}

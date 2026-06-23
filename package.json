@@ -1,0 +1,61 @@
+{
+  "name": "cheat-scanner",
+  "version": "0.1.0",
+  "description": "Windows cheat artifact scanner with registry and filesystem analysis and built-in Ollama JS AI summarization.",
+  "main": "dist/main.js",
+  "bin": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "package:win": "npm run build && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "cross-env": "^7.0.3",
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "ollama": "^0.6.3"
+  },
+  "pkg": {
+    "scripts": [
+      "dist/**/*.js"
+    ],
+    "assets": [],
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "build": {
+    "appId": "com.cheatscanner.app",
+    "productName": "Cheat Scanner",
+    "extraResources": [
+      {
+        "from": "dist/index.js",
+        "to": "dist/index.js",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "files": [
+      "dist/**/*",
+      "src/index.html",
+      "src/style.css"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "certificateFile": null,
+      "signingHashAlgorithms": null
+    }
+  },
+  "author": "x1agy"
+}

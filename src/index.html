@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cheat Scanner</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <header>
+            <h1>Cheat Scanner</h1>
+        </header>
+
+        <section class="form-section">
+            <label for="apiKey">Ollama API ключ</label>
+            <input id="apiKey" type="password" placeholder="Введите ключ" />
+            <button id="saveKey">Сохранить ключ</button>
+            <p id="keyStatus"></p>
+            <button id="createExe">Создать standalone EXE с этим ключом</button>
+        </section>
+
+        <section class="scan-section">
+            <div id="scanOutput" class="output"></div>
+        </section>
+    </div>
+    <script src="../dist/renderer.js"></script>
+</body>
+
+</html>
