@@ -18,7 +18,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.setMenu(null);
+  app.isPackaged && mainWindow.setMenu(null);
 
   mainWindow.loadFile(path.join(__dirname, '../src/index.html'));
   mainWindow.on('closed', () => {
@@ -95,13 +95,15 @@ ipcMain.handle('create-standalone-exe', async (_event, apiKey: string) => {
     const tempPackageJson = {
       name: 'cheat-scanner',
       version: '1.0.0',
-      main: app.isPackaged ? '../resources/dist/index.js' : '../dist/index.js',
-      bin: app.isPackaged ? '../resources/dist/index.js' : '../dist/index.js',
+      main: 'index.js',
+      bin: 'index.js',
       pkg: {
         assets: ['config.json'],
         targets: ['node18-win-x64'],
       },
     };
+
+    copyFileSync(entryFile, path.join(tempDir, 'index.js'));
 
     await writeFile(
       path.join(tempDir, 'package.json'),
@@ -109,7 +111,9 @@ ipcMain.handle('create-standalone-exe', async (_event, apiKey: string) => {
       'utf8'
     );
 
-    execSync('npx pkg . --output cheat-scanner.exe', {
+    execSync('npm install -g pkg', { stdio: 'inherit' });
+
+    execSync(`npx pkg . --output cheat-scanner.exe`, {
       stdio: 'inherit',
       cwd: tempDir,
     });

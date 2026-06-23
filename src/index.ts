@@ -1,7 +1,6 @@
-import { promises as fs } from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import * as path from 'path';
 import { execFileSync } from 'child_process';
-import { Ollama } from 'ollama';
 
 interface SuspiciousPattern {
   name: string;
@@ -250,33 +249,53 @@ ${JSON.stringify(report, null, 2)}
 Respond with a summary on Russian language.`;
 }
 
+function getApiKey() {
+  try {
+    const configPath = path.join(__dirname, 'config.json');
+
+    return JSON.parse(readFileSync(configPath, 'utf8')).apiKey;
+  } catch (e) {
+    console.error(e);
+    return '';
+  }
+}
+
 async function analyzeWithOllama(prompt: string): Promise<string | undefined> {
   try {
-    const ollama = new Ollama({
-      host: 'https://ollama.com',
+    const apiKey = getApiKey();
+
+    const response = await fetch('https://ollama.com/api/chat', {
+      method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + (process.env.OLLAMA_API_KEY || ''),
+        'Content-Type': 'application/json',
+        ...(apiKey && { Authorization: `Bearer ${apiKey}` }),
       },
+      body: JSON.stringify({
+        model: 'gpt-oss:120b',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a Windows security analyst. Analyze the report for suspicious cheat activity and summarize the most important findings.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      }),
     });
 
-    const response = await ollama.chat({
-      model: 'gpt-oss:120b',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a Windows security analyst. Analyze the report for suspicious cheat activity and summarize the most important findings.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Ollama API error:', response.status, errorText);
+      return undefined;
+    }
 
-    return (response as any)?.message?.content?.trim();
+    const data = await response.json();
+    return data?.message?.content?.trim();
   } catch (error: any) {
-    console.error('Ollama integration error:', error?.message || error);
+    console.error('Ollama API error:', error?.message || error);
     return undefined;
   }
 }
